@@ -1,6 +1,7 @@
 import {PropsWithChildren} from "react";
 import {AppBar, Box, Container, Paper} from "@mui/material";
 import React from "react";
+import PageHeader from "./components/PageHeader.tsx";
 
 const AppLayout: React.FC<PropsWithChildren> = (props) => {
     const {children} = props;
@@ -17,7 +18,7 @@ const AppLayout: React.FC<PropsWithChildren> = (props) => {
                     elevation={4}
                     square={true}
                 >
-                    <h1>Header</h1>
+                    <PageHeader/>
                 </Paper>
             </AppBar>
             <Container
