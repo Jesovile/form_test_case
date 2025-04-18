@@ -2,7 +2,11 @@ import {v4 as uuid} from "uuid";
 
 export type MerchantRequestData = {
     id: string;
-    title: string;
+    companyName: string;
+    companyId: string;
+    requestedLimit: number;
+    CEOName: string;
+    riskManagerResolution?: string;
     status: 'pending' | 'approved' | 'rejected'
 }
 
@@ -16,8 +20,8 @@ export class MerchantRequestRepository {
         return Object.values(this.requests);
     }
 
-    public getRequestDetails(requestId: string): MerchantRequestData | null {
-        return this.requests[requestId] || null;
+    public getRequestDetails(): MerchantRequestData | null {
+        return Object.values(this.requests)[0] || null;
     }
 
     public checkIsRequestExist(requestId: string): boolean {

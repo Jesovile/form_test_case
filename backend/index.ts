@@ -57,6 +57,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
         return res.status(403).json({ message: 'No token provided.' });
     }
     const userId = authRepository.verifyToken(token);
+    console.log('Auth middlewar: ', userId || 'No')
     if (!userId) {
         const logger = log4js.getLogger();
         logger.error("Token is not valid ", req?.originalUrl);
@@ -102,6 +103,7 @@ app.use(authMiddleware);
 // USER
 app.use('/api/user', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
+    console.log('userID: ', req.userId)
     const user= userRepository.getUserById(req.userId);
     logger.info("Successful user", user, res.userId);
     res.json(user);
@@ -118,6 +120,7 @@ app.post('/api/request', (req: Request, res: Response) => {
 app.post('/api/request/final', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
     const body = req.body;
+    console.log('New request: ', req.body);
     try {
         requestRepository.finalRequest(body.requestId, body.decision);
         logger.info(`Request ${body.requestId} is finalized with status ${body.decision}`);
@@ -127,20 +130,20 @@ app.post('/api/request/final', (req: Request, res: Response) => {
     }
 })
 
-app.get('/api/request/:id', (req: Request, res: Response) => {
+app.get('/api/request', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
-    const {id} = req.params;
-    if (!id) {
-        logger.error("Get Request. No request found", id, req?.body);
-        res.status(400).send("No request id");
-        return;
-    }
-    const request = requestRepository.getRequestDetails(id);
-    if (!request) {
-        logger.info("Get Request. Success", id, req?.body);
-        res.status(404).send("No request found");
-        return;
-    }
+    // const {id} = req.params;
+    // if (!id) {
+    //     logger.error("Get Request. No request found", id, req?.body);
+    //     res.status(400).send("No request id");
+    //     return;
+    // }
+    const request = requestRepository.getRequestDetails();
+    // if (!request) {
+    //     logger.info("Get Request. Success", request);
+    //     res.status(404).send("No request found");
+    //     return;
+    // }
     res.json(request);
 })
 

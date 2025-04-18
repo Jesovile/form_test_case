@@ -32,6 +32,7 @@ export class UserRepository {
     }
 
     public getUserById(id: string): UserData | null {
+        console.log("USERS: ", this.getUsers())
         return this.users[id] || null;
     }
 
