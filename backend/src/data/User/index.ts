@@ -32,8 +32,14 @@ export class UserRepository {
     }
 
     public getUserById(id: string): UserData | null {
-        console.log("USERS: ", this.getUsers())
+        // console.log("USERS: ", this.getUsers())
         return this.users[id] || null;
+    }
+
+    public getUsersByRole(role: 'merchant' | 'riskManager') {
+        const result = Object.values(this.users).filter(item => item.role === role);
+        console.log('getUsersByRole : ', result);
+        return result;
     }
 
     public getUsers() {

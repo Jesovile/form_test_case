@@ -27,6 +27,8 @@ const requestRepository = new MerchantRequestRepository();
 const userRepository = new UserRepository();
 const authRepository = new AuthRepository(userRepository.getUsers());
 
+const reviewer = userRepository.getUsers()[1];
+
 // OpenAPI specification
 // const openApiDocumentation = YAML.load('./apispec2.yaml');
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
@@ -36,7 +38,7 @@ let ERROR_REQUEST_NUMBER = 1;
 const errorMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const logger = log4js.getLogger();
     logger.info("ERROR_MIDDLEWARE request log: ", req?.originalUrl, req?.body);
-    if (ERROR_REQUEST_NUMBER % 5 === 0) {
+    if (ERROR_REQUEST_NUMBER % 10 === 0) {
         logger.warn(`Planned server Error ` + ERROR_REQUEST_NUMBER);
         ERROR_REQUEST_NUMBER++;
         return res.status(500).send('Planned Server Error')
@@ -61,7 +63,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     if (!userId) {
         const logger = log4js.getLogger();
         logger.error("Token is not valid ", req?.originalUrl);
-        return res.status(403).json({ message: 'No token provided.' });
+        return res.status(401).json({ message: 'No token provided.' });
     }
     req.userId = userId;
     next();
@@ -112,7 +114,7 @@ app.use('/api/user', (req: Request, res: Response) => {
 // MERCHANT REQUESTS
 app.post('/api/request', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
-    const newRequest = requestRepository.createNewRequest(res.body);
+    const newRequest = requestRepository.createNewRequest(req.body, req.userId, reviewer.id);
     logger.info("Successful request", newRequest);
     res.send(`Requests ${newRequest.id} is done successfully.`);
 })
@@ -120,7 +122,6 @@ app.post('/api/request', (req: Request, res: Response) => {
 app.post('/api/request/final', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
     const body = req.body;
-    console.log('New request: ', req.body);
     try {
         requestRepository.finalRequest(body.requestId, body.decision);
         logger.info(`Request ${body.requestId} is finalized with status ${body.decision}`);
@@ -131,23 +132,11 @@ app.post('/api/request/final', (req: Request, res: Response) => {
 })
 
 app.get('/api/request', (req: Request, res: Response) => {
-    const logger = log4js.getLogger();
-    // const {id} = req.params;
-    // if (!id) {
-    //     logger.error("Get Request. No request found", id, req?.body);
-    //     res.status(400).send("No request id");
-    //     return;
-    // }
     const request = requestRepository.getRequestDetails();
-    // if (!request) {
-    //     logger.info("Get Request. Success", request);
-    //     res.status(404).send("No request found");
-    //     return;
-    // }
     res.json(request);
 })
 
-app.get('/api/request', (req: Request, res: Response) => {
+app.get('/api/requests', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
     const requests = requestRepository.getRequests();
     logger.info("Successful requests ", req?.body);

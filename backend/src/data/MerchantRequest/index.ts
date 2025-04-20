@@ -7,7 +7,9 @@ export type MerchantRequestData = {
     requestedLimit: number;
     CEOName: string;
     riskManagerResolution?: string;
-    status: 'pending' | 'approved' | 'rejected'
+    status: 'pending' | 'approved' | 'rejected',
+    creator: string;
+    reviewer: string;
 }
 
 export class MerchantRequestRepository {
@@ -35,12 +37,15 @@ export class MerchantRequestRepository {
         this.requests[requestId].status = decision;
     }
 
-    public createNewRequest(requestData: MerchantRequestData): MerchantRequestData {
+    public createNewRequest(requestData: MerchantRequestData, creatorId: string, reviewerId: string): MerchantRequestData {
         const newRequestId = uuid();
+
         const newRequest: MerchantRequestData = {
             ...requestData,
             status: 'pending',
             id: newRequestId,
+            creator: creatorId,
+            reviewer: reviewerId,
         }
         this.requests[newRequestId] = newRequest;
         return newRequest;

@@ -56,7 +56,6 @@ export function MerchantRequestForm({role}: MerchantRequestFormProps) {
         setFormData(prev => ({...prev, [key]: value}));
     }
 
-
     if (isRequestLoading || isRequestListLoading) {
         return (
             <Box sx={{
