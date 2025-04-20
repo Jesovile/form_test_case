@@ -1,14 +1,10 @@
 import React from 'react';
-import {Box, Toolbar} from "@mui/material";
+import {Box, Toolbar, Typography} from "@mui/material";
 import UserMenu from "./UserMenu";
+import {useUserInfo} from "../../providers/UserInfoProvider";
 
-interface PageHeaderProps {
-    centralSlot?: React.ReactNode,
-    rightSlot?: React.ReactNode,
-}
-
-const PageHeader = (props: PageHeaderProps) => {
-    const {centralSlot} = props;
+const PageHeader = () => {
+    const {info} = useUserInfo();
 
     return (
         <Toolbar sx={{maxWidth: '1200px', margin: '0 auto'}}>
@@ -19,7 +15,7 @@ const PageHeader = (props: PageHeaderProps) => {
                 alignItems: 'center'
             }}>
                 <Box sx={{display: 'flex'}}>
-                    {centralSlot}
+                    <Typography>{`Role: ${info?.role || '<undefined>'}`}</Typography>
                 </Box>
                 <Box>
                     <UserMenu/>

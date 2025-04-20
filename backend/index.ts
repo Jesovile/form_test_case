@@ -107,8 +107,13 @@ app.use('/api/user', (req: Request, res: Response) => {
     const logger = log4js.getLogger();
     console.log('userID: ', req.userId)
     const user= userRepository.getUserById(req.userId);
-    logger.info("Successful user", user, res.userId);
-    res.json(user);
+    if (!user) {
+        logger.error('User not found. ID: ', req.userId);
+        res.status(400).send('User not found');
+    } else {
+        logger.info("Successful user", user, req.userId);
+        res.json(user);
+    }
 })
 
 // MERCHANT REQUESTS
